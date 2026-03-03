@@ -5,6 +5,10 @@ import com.juandev201305.app.ejercicio.models.Nota;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * INTERFAZ SERVICE:
+ * Tabla Nota
+ */
 public interface NotaService {
     List<Nota> listarTodo();
     Nota guardar(Nota no);

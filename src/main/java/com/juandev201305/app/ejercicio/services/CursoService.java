@@ -5,6 +5,10 @@ import com.juandev201305.app.ejercicio.models.Curso;
 
 import java.util.List;
 
+/**
+ * INTERFAZ SERVICE:
+ * Tabla Curso
+ */
 public interface CursoService {
     List<Curso> listarTodo();
     Curso guardar(Curso curso);

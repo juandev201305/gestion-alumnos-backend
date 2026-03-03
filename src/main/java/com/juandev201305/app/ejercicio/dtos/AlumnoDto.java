@@ -1,5 +1,9 @@
 package com.juandev201305.app.ejercicio.dtos;
 
+/**
+ * Clase DTO:
+ * Mostrar estado y respuesta a una request que elimine registro en la tabla Alumno
+ */
 public class AlumnoDto {
     String status;
     String message;

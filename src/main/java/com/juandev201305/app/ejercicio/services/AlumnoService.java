@@ -8,6 +8,10 @@ import com.juandev201305.app.ejercicio.models.Nota;
 
 import java.util.List;
 
+/**
+ * INTERFAZ SERVICE:
+ * Tabla Alumno
+ */
 public interface AlumnoService {
     List<Alumno> listarTodo();
     Alumno guardar(Alumno alumn);

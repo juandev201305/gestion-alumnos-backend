@@ -6,13 +6,17 @@ import com.juandev201305.app.ejercicio.models.Alumno;
 import com.juandev201305.app.ejercicio.models.Curso;
 import com.juandev201305.app.ejercicio.models.Nota;
 import com.juandev201305.app.ejercicio.services.AlumnoService;
-import org.aspectj.weaver.ast.Not;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Clase RestController:
+ * Tabla Alumno
+ */
 @RestController
 @RequestMapping("/alumno")
 @CrossOrigin(origins = "*")

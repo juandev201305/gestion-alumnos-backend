@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * INTERFAZ REPOSITORIO:
+ * Consultas SQL de la tabla Nota
+ */
 public interface NotaRepository extends JpaRepository<Nota,Long> {
     List<Nota> findByAlumnoId(Long idALumno);
     List<Nota> findByAlumnoIdAndAsignaturaId(Long idALumno, Long idAsignatura);

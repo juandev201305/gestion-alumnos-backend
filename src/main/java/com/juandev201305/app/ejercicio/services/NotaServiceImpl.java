@@ -14,6 +14,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * IMPLEMENTACIÓN SERVICE NOTA:
+ * Logica de negocio.
+ */
 @Service
 public class NotaServiceImpl implements NotaService {
     private final NotaRepository notaRepo;

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Clase RestController:
+ * Tabla Nota
+ */
 @RestController
 @RequestMapping("/nota")
 @CrossOrigin(origins = "*")

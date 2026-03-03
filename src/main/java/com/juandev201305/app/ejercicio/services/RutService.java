@@ -4,6 +4,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * SERVICE RUT:
+ * Implementación de logica para verificar ruts legitimos.
+ */
 @Service
 public class RutService {
     public String verificarRut(String rutStr){

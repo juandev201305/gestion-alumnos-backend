@@ -10,9 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * IMPLEMENTACIÓN SERVICE ASIGNATURA:
+ * Logica de negocio.
+ */
 @Service
-public
-class AsignaturaServiceImpl implements AsignaturaService {
+public class AsignaturaServiceImpl implements AsignaturaService {
     private final AsignaturaRepository asigRepo;
     private final NotaRepository notaRepo;
     public AsignaturaServiceImpl(AsignaturaRepository asig, NotaRepository nota){

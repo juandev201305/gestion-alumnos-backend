@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Clase RestController:
+ * Tabla Curso
+ */
 @RestController
 @RequestMapping("/curso")
 @CrossOrigin(origins = "*")

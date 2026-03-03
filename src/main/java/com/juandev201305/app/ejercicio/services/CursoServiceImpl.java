@@ -9,6 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+/**
+ * IMPLEMENTACIÓN SERVICE CURSO:
+ * Logica de negocio.
+ */
 @Service
 public class CursoServiceImpl implements CursoService{
     private final CursoRepository cursoRepo;

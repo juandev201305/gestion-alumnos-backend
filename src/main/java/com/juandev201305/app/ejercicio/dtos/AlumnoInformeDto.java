@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.juandev201305.app.ejercicio.models.Asignatura;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * Clase AlumnoInformeDto:
+ * Mostrar un informe completo de un alumno
+ */
 @JsonPropertyOrder({ "nombre",
         "rut",
         "nivel",
