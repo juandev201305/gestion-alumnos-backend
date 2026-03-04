@@ -52,19 +52,18 @@ public class CursoServiceImpl implements CursoService{
         if(optionalCurso.isEmpty()){
             return null;
         }
-        Optional<Curso> optionalLetraOrNivel= cursoRepo.findByLetraAndNivel(curso.getLetra(),curso.getNivel());
-        if(optionalLetraOrNivel.isPresent()){
-            return null;
-        }
+
         Optional<Curso> optionalProfesorJefe = cursoRepo.findByNombreProfesorJefe(curso.getNombreProfesorJefe());
         if(optionalProfesorJefe.isPresent()){
             return null;
         }
 
+        System.out.println("logica de nivel");
         if(curso.getNivel()>4 && curso.getNivel()<1){
             return null;
         }
-        cursoRepo.save(optionalCurso.get());
+        curso.setLetra(curso.getLetra());
+        cursoRepo.save(curso);
         return curso;
     }
 
