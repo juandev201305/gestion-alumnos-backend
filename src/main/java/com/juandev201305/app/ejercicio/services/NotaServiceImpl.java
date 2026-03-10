@@ -67,7 +67,7 @@ public class NotaServiceImpl implements NotaService {
         if(no.getNota()>7 || no.getNota()<2){
             return null;
         }
-        notaRepo.save(optionalNota.get());
+        notaRepo.save(no);
         return no;
     }
 

@@ -72,7 +72,7 @@ public class AlumnoServiceImpl implements AlumnoService {
             return null;
         }
         rutServ.verificarRut(alumn.getRut());
-        alumRepo.save(optionalAlumno.get());
+        alumRepo.save(alumn);
         return alumn;
     }
 

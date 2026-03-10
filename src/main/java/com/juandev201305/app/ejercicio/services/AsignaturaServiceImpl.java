@@ -41,7 +41,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if(asignaturaOptional.isEmpty()){
             return null;
         }
-        asigRepo.save(asignaturaOptional.get());
+        asigRepo.save(asignatura);
         return asignatura;
     }
 
