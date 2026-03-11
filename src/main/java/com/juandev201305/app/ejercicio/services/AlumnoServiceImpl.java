@@ -1,6 +1,5 @@
 package com.juandev201305.app.ejercicio.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.juandev201305.app.ejercicio.dtos.AlumnoDto;
 import com.juandev201305.app.ejercicio.dtos.AlumnoInformeDto;
 import com.juandev201305.app.ejercicio.models.Alumno;
@@ -8,14 +7,11 @@ import com.juandev201305.app.ejercicio.models.Asignatura;
 import com.juandev201305.app.ejercicio.models.Curso;
 import com.juandev201305.app.ejercicio.models.Nota;
 import com.juandev201305.app.ejercicio.repositorys.AlumnoRepository;
-import com.juandev201305.app.ejercicio.repositorys.AsignaturaRepository;
 import com.juandev201305.app.ejercicio.repositorys.CursoRepository;
 import com.juandev201305.app.ejercicio.repositorys.NotaRepository;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -166,7 +162,6 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
         informe.setNotasPorAsignatura(notasAsignatura);
         Map<String,Float> promedioPorAsignatura = new LinkedHashMap<>();
-        DecimalFormat formato = new DecimalFormat("#.00");
         for(int i = 0 ;i<asignaturas.size();i++){
             Float resultado = 0.0f,promedio = 0.0f;
             List<Float> notas = notaRepo.listarNotasDeCadaAsignaturaPorAlumno(asignaturas.get(i).getId(),alumno.getId());

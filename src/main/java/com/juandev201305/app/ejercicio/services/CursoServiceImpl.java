@@ -17,10 +17,8 @@ import java.util.Optional;
 @Service
 public class CursoServiceImpl implements CursoService{
     private final CursoRepository cursoRepo;
-    private final AlumnoRepository alumnRepo;
     public CursoServiceImpl(CursoRepository curso,AlumnoRepository alumno){
         this.cursoRepo=curso;
-        this.alumnRepo=alumno;
     }
     @Override
     @Transactional(readOnly = true)
@@ -58,7 +56,6 @@ public class CursoServiceImpl implements CursoService{
             return null;
         }
 
-        System.out.println("logica de nivel");
         if(curso.getNivel()>4 && curso.getNivel()<1){
             return null;
         }

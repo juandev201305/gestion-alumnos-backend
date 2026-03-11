@@ -32,15 +32,15 @@ public class RutService {
                 multiplicador=2;
             }
         }
-        System.out.println(total);
+  
         int division = total/11;
-        System.out.println(division);
+
         division*=11;
-        System.out.println(division);
+
         total-=division;
-        System.out.println(total);
+
         int verificador=11-total;
-        System.out.println(verificador+ " "+dv);
+
         if(verificador == 11){
             verificador = 0;
         }
