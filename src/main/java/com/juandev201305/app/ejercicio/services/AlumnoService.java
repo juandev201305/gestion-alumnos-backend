@@ -23,5 +23,5 @@ public interface AlumnoService {
     Float promedioAsignaturaAlumno(Long idAlumno,Long idAsignatura);
     AlumnoInformeDto informe (Long idAlumno);
 
-    List<Float> prueba (Long id,Long id2);
+    //List<Float> prueba (Long id,Long id2);
 }

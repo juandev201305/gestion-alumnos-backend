@@ -135,8 +135,8 @@ public class AlumnoController {
                 .body(informe);
     }
 
-    @GetMapping("/prueba")
-    public ResponseEntity<List<Float>> xd (@RequestParam Long id, @RequestParam Long id2){
-        return ResponseEntity.ok(alumServ.prueba(id,id2));
-    }
+    //@GetMapping("/prueba")
+    //public ResponseEntity<List<Float>> xd (@RequestParam Long id, @RequestParam Long id2){
+        //return ResponseEntity.ok(alumServ.prueba(id,id2));
+    //}
 }
