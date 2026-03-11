@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * IMPLEMENTACIÓN SERVICE ASIGNATURA:
@@ -37,32 +36,28 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     @Override
     @Transactional
     public Asignatura actualizar(Asignatura asignatura) {
-        Optional<Asignatura> asignaturaOptional = asigRepo.findById(asignatura.getId());
-        if(asignaturaOptional.isEmpty()){
-            return null;
-        }
-        asigRepo.save(asignatura);
+        Asignatura asignaturaBd = asigRepo.findById(asignatura.getId())
+            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+        asignaturaBd.setNombre(asignatura.getNombre());
+        asignaturaBd.setProfesor(asignatura.getProfesor());
+        asigRepo.save(asignaturaBd);
         return asignatura;
     }
 
     @Override
     @Transactional
     public Asignatura eliminar(Long idAsignatura) {
-        Optional<Asignatura> optionalAsignatura = asigRepo.findById(idAsignatura);
-        if(optionalAsignatura.isEmpty()){
-            return null;
-        }
-        asigRepo.delete(optionalAsignatura.get());
-        return optionalAsignatura.get();
+        Asignatura asignaturaBd = asigRepo.findById(idAsignatura)
+            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+        asigRepo.delete(asignaturaBd);
+        return asignaturaBd;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Nota> notasPorAsignatura(Long idAsignatura) {
-        Optional<Asignatura> optionalAsignatura = asigRepo.findById(idAsignatura);
-        if(optionalAsignatura.isEmpty()){
-            return null;
-        }
-        return notaRepo.findByAsignaturaId(idAsignatura);
+        Asignatura asignaturaBd = asigRepo.findById(idAsignatura)
+            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+        return notaRepo.findByAsignaturaId(asignaturaBd.getId());
     }
 }

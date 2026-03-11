@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * IMPLEMENTACIÓN SERVICE CURSO:
@@ -29,14 +28,16 @@ public class CursoServiceImpl implements CursoService{
     @Override
     @Transactional
     public Curso guardar(Curso curso) {
-        Optional<Curso> optionalLetraOrNivel = cursoRepo.findByLetraAndNivel(curso.getLetra(),curso.getNivel());
-        if(optionalLetraOrNivel.isPresent()){
-            return null;
-        }
-        Optional<Curso> optionalProfesorJefe = cursoRepo.findByNombreProfesorJefe(curso.getNombreProfesorJefe());
-        if(optionalProfesorJefe.isPresent()){
-            return null;
-        }
+        cursoRepo.findByLetraAndNivel(curso.getLetra(),curso.getNivel())
+            .ifPresent((cursoWithNivelAndLetra) -> {
+                throw new RuntimeException("Curso existente");
+            });
+        
+        cursoRepo.findByNombreProfesorJefe(curso.getNombreProfesorJefe())
+            .ifPresent((cursoWithProfesorJefe) -> {
+                throw new RuntimeException("Curso existente");
+            });
+
         if(curso.getNivel()>4 || curso.getNivel()<1){
             return null;
         }
@@ -46,42 +47,39 @@ public class CursoServiceImpl implements CursoService{
     @Override
     @Transactional
     public Curso actualizar(Curso curso) {
-        Optional<Curso> optionalCurso = cursoRepo.findById(curso.getId());
-        if(optionalCurso.isEmpty()){
-            return null;
-        }
+        Curso cursoBd = cursoRepo.findById(curso.getId())
+            .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+     
 
-        Optional<Curso> optionalProfesorJefe = cursoRepo.findByNombreProfesorJefe(curso.getNombreProfesorJefe());
-        if(optionalProfesorJefe.isPresent()){
-            return null;
-        }
+        cursoRepo.findByNombreProfesorJefe(curso.getNombreProfesorJefe())
+            .ifPresent((cursoWithProfesorJefe) -> {
+                throw new RuntimeException("ProfesorExistente");
+            });
 
         if(curso.getNivel()>4 && curso.getNivel()<1){
-            return null;
+            throw new RuntimeException("Nivel del curso erroneo");
         }
-        curso.setLetra(curso.getLetra());
-        cursoRepo.save(curso);
+        cursoBd.setLetra(curso.getLetra());
+        cursoBd.setNivel(curso.getNivel());
+        cursoBd.setNombreProfesorJefe(curso.getNombreProfesorJefe());
+        cursoRepo.save(cursoBd);
         return curso;
     }
 
     @Override
     @Transactional
     public Curso eliminar(Long idCurso) {
-        Optional<Curso> cursoOptional = cursoRepo.findById(idCurso);
-        if(cursoOptional.isEmpty()){
-            return null;
-        }
-        cursoRepo.delete(cursoOptional.get());
-        return cursoOptional.get();
+        Curso cursoBd = cursoRepo.findById(idCurso)
+            .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+        cursoRepo.delete(cursoBd);
+        return cursoBd;
     }
 
     @Override
     @Transactional
     public List<Alumno> obtenerAlumnosPorId(Long idCurso) {
-        Optional<Curso> optionalCurso = cursoRepo.findById(idCurso);
-        if(optionalCurso.isEmpty()){
-            return null;
-        }
-        return optionalCurso.get().getAlumnos();
+        Curso cursoBd = cursoRepo.findById(idCurso)
+            .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+        return cursoBd.getAlumnos();
     }
 }

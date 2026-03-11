@@ -21,12 +21,10 @@ public class RutService {
 
         for(int i=0;i<rutStr.length()-1;i++){
             rut.add(Character.getNumericValue(rutStr.charAt(i)));
-            System.out.println(rut);
         }
         int total=0,multiplicador=2;
         for(int i = rut.size()-1; i >= 0; i--){
             total+=rut.get(i)*multiplicador;
-            System.out.println(rut.get(i)+"*"+multiplicador);
             multiplicador++;
             if(multiplicador==8){
                 multiplicador=2;
@@ -45,7 +43,7 @@ public class RutService {
             verificador = 0;
         }
         if(dv!=verificador){
-            return null;
+            throw new RuntimeException("Rut erroneo");
         }
         return rutStr;
     }

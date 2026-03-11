@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * IMPLEMENTACIÓN SERVICE NOTA:
@@ -37,48 +36,47 @@ public class NotaServiceImpl implements NotaService {
     @Override
     @Transactional
     public Nota guardar(Nota nota) {
-        Optional<Alumno> alumnoOpt = alumnRepo.findById(nota.getAlumno().getId());
-        if(alumnoOpt.isEmpty()){
-            return null;
-        }
-        Optional<Asignatura> asignatura = asigRepo.findById(nota.getAsignatura().getId());
-        if(asignatura.isEmpty()){
-            return null;
-        }
+        alumnRepo.findById(nota.getAlumno().getId())
+            .ifPresent((alumno) -> {
+                throw new RuntimeException("Alumno existente");
+            });
+        asigRepo.findById(nota.getAsignatura().getId())
+            .ifPresent((asignatura) -> {
+                throw new RuntimeException("Asignatura existente");
+            });;
         return notaRepo.save(nota);
     }
 
     @Override
     @Transactional
-    public Nota actualizar(Nota no) {
-        Optional<Nota> optionalNota = notaRepo.findById(no.getId());
-        if(optionalNota.isEmpty()){
+    public Nota actualizar(Nota nota) {
+        Nota notaBd = notaRepo.findById(nota.getId())
+            .orElseThrow(() -> new RuntimeException("Nota no encontrada"));
+
+        Alumno alumnoBd = alumnRepo.findById(nota.getAlumno().getId())
+            .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
+
+        Asignatura asignaturaBd = asigRepo.findById(nota.getAsignatura().getId())
+            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+
+        if(nota.getNota()>7 || nota.getNota()<2){
             return null;
         }
-        Optional<Alumno> alumnoOpt = alumnRepo.findById(no.getAlumno().getId());
-        if(alumnoOpt.isEmpty()){
-            return null;
-        }
-        Optional<Asignatura> asignatura = asigRepo.findById(no.getAsignatura().getId());
-        if(asignatura.isEmpty()){
-            return null;
-        }
-        if(no.getNota()>7 || no.getNota()<2){
-            return null;
-        }
-        notaRepo.save(no);
-        return no;
+        notaBd.setAlumno(alumnoBd);
+        notaBd.setAsignatura(asignaturaBd);
+        notaBd.setNota(nota.getNota());
+        notaRepo.save(notaBd);
+        return nota;
     }
 
     @Override
     @Transactional
     public Nota eliminar(Long id) {
-        Optional<Nota> optionalNota = notaRepo.findById(id);
-        if(optionalNota.isEmpty()) {
-            return null;
-        }
-        notaRepo.delete(optionalNota.get());
-        return optionalNota.get();
+        Nota notaBd = notaRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Nota no encontada"));
+
+        notaRepo.delete(notaBd);
+        return notaBd;
     }
 
     @Override
@@ -86,8 +84,8 @@ public class NotaServiceImpl implements NotaService {
     public List<Nota> notasPorFecha(String fechaInicioStr, String fechaFinalStr) {
         try{
             Instant fechaInicio = Instant.parse(fechaInicioStr);
-             Instant fechaFinal = Instant.parse(fechaFinalStr);
-             return notaRepo.findByFechaBetween(fechaInicio,fechaFinal);
+            Instant fechaFinal = Instant.parse(fechaFinalStr);
+            return notaRepo.findByFechaBetween(fechaInicio,fechaFinal);
         } catch (Exception e) {
             return null;
         }
