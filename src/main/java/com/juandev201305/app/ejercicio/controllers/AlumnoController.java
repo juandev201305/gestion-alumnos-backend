@@ -1,10 +1,7 @@
 package com.juandev201305.app.ejercicio.controllers;
 
-import com.juandev201305.app.ejercicio.dtos.AlumnoDto;
-import com.juandev201305.app.ejercicio.dtos.AlumnoInformeDto;
-import com.juandev201305.app.ejercicio.models.Alumno;
+import com.juandev201305.app.ejercicio.dtos.*;
 import com.juandev201305.app.ejercicio.models.Curso;
-import com.juandev201305.app.ejercicio.models.Nota;
 import com.juandev201305.app.ejercicio.services.AlumnoService;
 
 import org.springframework.http.HttpStatus;
@@ -26,84 +23,55 @@ public class AlumnoController {
         this.alumServ=alumn;
     }
     @GetMapping
-    public ResponseEntity<List<Alumno>> listartodo(){
+    public ResponseEntity<List<AlumnoDto>> listartodo(){
         return ResponseEntity.ok(alumServ.listarTodo());
     }
 
     @PostMapping
-    public ResponseEntity<Alumno> crear(@RequestBody Alumno al){
-        Alumno alumno = alumServ.guardar(al);
-        if(alumno==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<AlumnoDto> crear(@RequestBody AlumnoFormDto alumnoForm){
+        AlumnoDto alumnoDto = alumServ.guardar(alumnoForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(alumno);
+                .body(alumnoDto);
     }
 
-    @PutMapping
-    public ResponseEntity<Alumno> actualizar(@RequestBody Alumno al){
-        Alumno alumno = alumServ.guardar(al);
-        if(alumno==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<AlumnoDto> actualizar(@RequestBody AlumnoFormDto alumnoForm, @PathVariable Long id){
+        AlumnoDto alumnoDto = alumServ.actualizar(alumnoForm,id);
         return  ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(alumno);
+                .body(alumnoDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AlumnoDto> eliminar(@PathVariable Long id){
-        AlumnoDto alumno = alumServ.eliminar(id);
-        if(alumno==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
-        if(alumno.getStatus().equals("209")){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(alumno);
-        }
+    public ResponseEntity<ApiReponseStatusDto> eliminar(@PathVariable Long id){
+        ApiReponseStatusDto response = alumServ.eliminar(id);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(alumno);
+                .body(response);
     }
 
     @GetMapping("/{idAlumno}/curso")
-    public ResponseEntity<Curso> cursoDeAlumno(@PathVariable Long idAlumno){
+    public ResponseEntity<CursoResumenDto> cursoDeAlumno(@PathVariable Long idAlumno){
         Curso curso = alumServ.buscarCursoDelAlumno(idAlumno);
-        if(curso==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
-        return ResponseEntity.ok(curso);
+        CursoResumenDto cursoDto = new CursoResumenDto();
+        cursoDto.setId(curso.getId());
+        cursoDto.setNivel(curso.getNivel());
+        cursoDto.setLetra(curso.getLetra());
+        cursoDto.setProfesorJefe(curso.getNombreProfesorJefe());
+        return ResponseEntity.ok(cursoDto);
     }
 
     @GetMapping("/{idAlumno}/notas")
-    public ResponseEntity<List<Nota>> notasPorAlumnos(@PathVariable Long idAlumno){
-        List<Nota> notas = alumServ.notaPorAlumno(idAlumno);
-        if(notas==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<List<NotaDto>> notasPorAlumnos(@PathVariable Long idAlumno){
+        List<NotaDto> notas = alumServ.notaPorAlumno(idAlumno);
         return ResponseEntity.ok(notas);
     }
 
     @GetMapping("/{idAlumno}/promedio")
     public ResponseEntity<Float> promedioGeneral(@PathVariable Long idAlumno){
         Float promedio = alumServ.promedioGeneralAlumno(idAlumno);
-        if (promedio==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(promedio);
@@ -112,11 +80,6 @@ public class AlumnoController {
     @GetMapping("/{idAlumno}/promedio/asignatura/{idAsignatura}")
     public ResponseEntity<Float> promedioAsignatura(@PathVariable Long idAlumno, @PathVariable Long idAsignatura){
         Float promedio = alumServ.promedioAsignaturaAlumno(idAlumno,idAsignatura);
-        if(promedio==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(0f);
-        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(promedio);
@@ -125,18 +88,8 @@ public class AlumnoController {
     @GetMapping("/{idAlumno}/informe")
     public ResponseEntity<AlumnoInformeDto> informe (@PathVariable Long idAlumno){
         AlumnoInformeDto informe = alumServ.informe(idAlumno);
-        if(informe==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(informe);
     }
-
-    //@GetMapping("/prueba")
-    //public ResponseEntity<List<Float>> xd (@RequestParam Long id, @RequestParam Long id2){
-        //return ResponseEntity.ok(alumServ.prueba(id,id2));
-    //}
 }

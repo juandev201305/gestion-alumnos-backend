@@ -1,6 +1,8 @@
 package com.juandev201305.app.ejercicio.services;
 
-import com.juandev201305.app.ejercicio.models.Nota;
+import com.juandev201305.app.ejercicio.dtos.ApiReponseStatusDto;
+import com.juandev201305.app.ejercicio.dtos.NotaDto;
+import com.juandev201305.app.ejercicio.dtos.NotaFormDto;
 
 import java.util.List;
 
@@ -9,9 +11,9 @@ import java.util.List;
  * Tabla Nota
  */
 public interface NotaService {
-    List<Nota> listarTodo();
-    Nota guardar(Nota no);
-    Nota actualizar(Nota no);
-    Nota eliminar(Long id);
-    List<Nota> notasPorFecha(String fechaInicioStr,String fechaFinalStr);
+    List<NotaDto> listarTodo();
+    NotaDto guardar(NotaFormDto no);
+    NotaDto actualizar(NotaFormDto no, Long idNota);
+    ApiReponseStatusDto eliminar(Long id);
+    List<NotaDto> notasPorFecha(String fechaInicioStr,String fechaFinalStr);
 }

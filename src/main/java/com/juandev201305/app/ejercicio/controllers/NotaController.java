@@ -1,6 +1,8 @@
 package com.juandev201305.app.ejercicio.controllers;
 
-import com.juandev201305.app.ejercicio.models.Nota;
+import com.juandev201305.app.ejercicio.dtos.ApiReponseStatusDto;
+import com.juandev201305.app.ejercicio.dtos.NotaDto;
+import com.juandev201305.app.ejercicio.dtos.NotaFormDto;
 import com.juandev201305.app.ejercicio.services.NotaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,52 +23,37 @@ public class NotaController {
         this.notaServ=nota;
     }
     @GetMapping
-    public ResponseEntity<List<Nota>> listarTodo(){
+    public ResponseEntity<List<NotaDto>> listarTodo(){
         return ResponseEntity.ok(notaServ.listarTodo());
     }
-    @PostMapping
-    public ResponseEntity<Nota> crear(@RequestBody Nota not){
-        Nota nota = notaServ.guardar(not);
-        if(nota==null){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(nota);
-    }
 
-    @PutMapping
-    public ResponseEntity<Nota> actualizar(@RequestBody Nota no){
-        Nota nota = notaServ.actualizar(no);
-        if(nota==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    @PostMapping
+    public ResponseEntity<NotaDto> crear(@RequestBody NotaFormDto notaForm){
+        NotaDto notaDto = notaServ.guardar(notaForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(nota);
+                .body(notaDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NotaDto> actualizar(@RequestBody NotaFormDto notaForm, @PathVariable Long id){
+        NotaDto notaDto = notaServ.guardar(notaForm);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(notaDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Nota> eliminar(@PathVariable Long id){
-        Nota nota = notaServ.eliminar(id);
-        if(nota==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<ApiReponseStatusDto> eliminar(@PathVariable Long id){
+        ApiReponseStatusDto response = notaServ.eliminar(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(nota);
+                .body(response);
     }
 
     @GetMapping("/fecha")
-    public ResponseEntity<List<Nota>> notas (@RequestParam String fechaInicio, @RequestParam String fechaFin){
-        List<Nota> notas = notaServ.notasPorFecha(fechaInicio,fechaFin);
-        if(notas==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<List<NotaDto>> notasByDate (@RequestParam String fechaInicio, @RequestParam String fechaFin){
+        List<NotaDto> notas = notaServ.notasPorFecha(fechaInicio,fechaFin);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(notas);

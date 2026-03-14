@@ -1,7 +1,9 @@
 package com.juandev201305.app.ejercicio.controllers;
 
-import com.juandev201305.app.ejercicio.models.Alumno;
-import com.juandev201305.app.ejercicio.models.Curso;
+import com.juandev201305.app.ejercicio.dtos.AlumnoDto;
+import com.juandev201305.app.ejercicio.dtos.ApiReponseStatusDto;
+import com.juandev201305.app.ejercicio.dtos.CursoDto;
+import com.juandev201305.app.ejercicio.dtos.CursoFormDto;
 import com.juandev201305.app.ejercicio.services.CursoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,56 +25,36 @@ public class CursoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Curso>> listarTodo(){
+    public ResponseEntity<List<CursoDto>> listarTodo(){
         return ResponseEntity.ok(cursoServ.listarTodo());
     }
     @PostMapping
-    public ResponseEntity<Curso> crear(@RequestBody Curso curs){
-        Curso curso = cursoServ.guardar(curs);
-        if(curso==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<CursoDto> crear(@RequestBody CursoFormDto cursoForm){
+        CursoDto cursoDto = cursoServ.guardar(cursoForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(curso);
+                .body(cursoDto);
     }
 
-    @PutMapping
-    public ResponseEntity<Curso> actualizar(@RequestBody Curso cur){
-        Curso curso = cursoServ.actualizar(cur);
-        if(curso==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<CursoDto> actualizar(@RequestBody CursoFormDto cursoForm, Long id){
+        CursoDto cursoDto = cursoServ.actualizar(cursoForm, id);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(curso);
+                .body(cursoDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Curso> eliminar(@PathVariable Long id){
-        Curso curso = cursoServ.eliminar(id);
-        if(curso==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<ApiReponseStatusDto> eliminar(@PathVariable Long id){
+        ApiReponseStatusDto response = cursoServ.eliminar(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(curso);
+                .body(response);
     }
 
     @GetMapping("/{idCurso}/alumnos")
-    public ResponseEntity<List<Alumno>> buscarAlumnos(@PathVariable Long idCurso){
-        List<Alumno> alumnos = cursoServ.obtenerAlumnosPorId(idCurso);
-        if(alumnos==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<List<AlumnoDto>> buscarAlumnos(@PathVariable Long idCurso){
+        List<AlumnoDto> alumnos = cursoServ.obtenerAlumnosPorId(idCurso);
         return ResponseEntity.ok(alumnos);
     }
 }

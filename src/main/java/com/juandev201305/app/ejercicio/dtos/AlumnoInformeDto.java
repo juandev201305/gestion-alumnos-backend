@@ -1,7 +1,6 @@
 package com.juandev201305.app.ejercicio.dtos;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.juandev201305.app.ejercicio.models.Asignatura;
 
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class AlumnoInformeDto {
     private String rut;
     private Integer nivel;
     private Character letra;
-    private List<Asignatura> asignaturas;
+    private List<AsignaturaDto> asignaturas;
     private Map<String, List<Float>> notasPorAsignatura;
     private Map<String,Float> promedioPorAsignatura;
     private Float promedio;
@@ -65,11 +64,11 @@ public class AlumnoInformeDto {
         this.letra = letra;
     }
 
-    public List<Asignatura> getAsignaturas() {
+    public List<AsignaturaDto> getAsignaturasDto() {
         return asignaturas;
     }
 
-    public void setAsignaturas(List<Asignatura> asignaturas) {
+    public void setAsignaturas(List<AsignaturaDto> asignaturas) {
         this.asignaturas = asignaturas;
     }
 

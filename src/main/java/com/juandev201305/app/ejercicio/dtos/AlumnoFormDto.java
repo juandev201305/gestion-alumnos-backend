@@ -1,28 +1,9 @@
 package com.juandev201305.app.ejercicio.dtos;
 
-public class AlumnoDto {
-    private Long id;
+public class AlumnoFormDto {
     private String nombre;
     private String rut;
     private Long idCurso;
-
-    public AlumnoDto(Long id, String nombre, String rut, Long idCurso) {
-        this.id = id;
-        this.nombre = nombre;
-        this.rut = rut;
-        this.idCurso = idCurso;
-    }
-
-    public AlumnoDto() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getNombre() {
         return nombre;

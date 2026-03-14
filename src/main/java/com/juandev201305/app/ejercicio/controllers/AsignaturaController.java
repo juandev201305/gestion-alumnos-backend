@@ -1,7 +1,9 @@
 package com.juandev201305.app.ejercicio.controllers;
 
-import com.juandev201305.app.ejercicio.models.Asignatura;
-import com.juandev201305.app.ejercicio.models.Nota;
+import com.juandev201305.app.ejercicio.dtos.ApiReponseStatusDto;
+import com.juandev201305.app.ejercicio.dtos.AsignaturaDto;
+import com.juandev201305.app.ejercicio.dtos.AsignaturaFormDto;
+import com.juandev201305.app.ejercicio.dtos.NotaDto;
 import com.juandev201305.app.ejercicio.services.AsignaturaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,47 +24,34 @@ public class AsignaturaController {
         this.asigServ=asig;
     }
     @GetMapping
-    public ResponseEntity<List<Asignatura>> listarTodo(){
+    public ResponseEntity<List<AsignaturaDto>> listarTodo(){
         return ResponseEntity.ok(asigServ.listarTodo());
     }
     @PostMapping
-    public ResponseEntity<Asignatura> crear(@RequestBody Asignatura as){
-        Asignatura asignatura = asigServ.guardar(as);
+    public ResponseEntity<AsignaturaDto> crear(@RequestBody AsignaturaFormDto asignaturaForm){
+        AsignaturaDto asignaturaDto = asigServ.guardar(asignaturaForm);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(asignatura);
+                .body(asignaturaDto);
     }
 
-    @PutMapping
-    public ResponseEntity<Asignatura> actualizar(@RequestBody Asignatura asig){
-        Asignatura asignatura =  asigServ.actualizar(asig);
-        if(asignatura==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(asignatura);
+    @PutMapping("/{id}")
+    public ResponseEntity<AsignaturaDto> actualizar(@RequestBody AsignaturaFormDto asignaturaForm, @PathVariable Long id){
+        AsignaturaDto asignaturaDto =  asigServ.actualizar(asignaturaForm, id);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(asignaturaDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Asignatura> eliminar(@PathVariable Long id){
-        Asignatura asignatura =  asigServ.eliminar(id);
-        if(asignatura==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(asignatura);
+    public ResponseEntity<ApiReponseStatusDto> eliminar(@PathVariable Long id){
+        ApiReponseStatusDto response =  asigServ.eliminar(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{idAsignatura}/notas")
-    public ResponseEntity<List<Nota>> notasPorAsignatura(@PathVariable Long idAsignatura){
-        List<Nota> notas = asigServ.notasPorAsignatura(idAsignatura);
-        if(notas==null){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(null);
-        }
+    public ResponseEntity<List<NotaDto>> notasPorAsignatura(@PathVariable Long idAsignatura){
+        List<NotaDto> notas = asigServ.notasPorAsignatura(idAsignatura);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(notas);
