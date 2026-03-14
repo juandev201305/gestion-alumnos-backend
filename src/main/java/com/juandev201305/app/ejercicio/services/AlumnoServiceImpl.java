@@ -1,9 +1,7 @@
 package com.juandev201305.app.ejercicio.services;
 
-import com.juandev201305.app.ejercicio.dtos.AlumnoDto;
-import com.juandev201305.app.ejercicio.dtos.AlumnoInformeDto;
+import com.juandev201305.app.ejercicio.dtos.*;
 import com.juandev201305.app.ejercicio.models.Alumno;
-import com.juandev201305.app.ejercicio.models.Asignatura;
 import com.juandev201305.app.ejercicio.models.Curso;
 import com.juandev201305.app.ejercicio.models.Nota;
 import com.juandev201305.app.ejercicio.repositorys.AlumnoRepository;
@@ -34,14 +32,19 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
     @Override
     @Transactional(readOnly = true)
-    public List<Alumno> listarTodo() {
-        return alumRepo.findAll();
+    public List<AlumnoDto> listarTodo() {
+        List<AlumnoDto> alumnoDtos = new ArrayList<>();
+        List<Alumno> alumnos = alumRepo.findAll();
+        for(Alumno alumno: alumnos) {
+            alumnoDtos.add(new AlumnoDto(alumno.getId(),alumno.getNombre(),alumno.getRut(),alumno.getCurso().getId()));
+        }
+        return alumnoDtos;
     }
 
     @Override
     @Transactional
-    public Alumno guardar(Alumno alumn) {
-        String rut = rutServ.verificarRut(alumn.getRut());
+    public AlumnoDto guardar(AlumnoFormDto alumnoForm) {
+        String rut = rutServ.verificarRut(alumnoForm.getRut());
         if(rut==null){
             return null;
         }
@@ -50,45 +53,59 @@ public class AlumnoServiceImpl implements AlumnoService {
                 throw new RuntimeException("Rut existente");
             });
        
-        cursoRepo.findById(alumn.getCurso().getId())
+        Curso curso = cursoRepo.findById(alumnoForm.getIdCurso())
             .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+        Alumno alumnoBd = new Alumno();
+        alumnoBd.setNombre(alumnoForm.getNombre());
+        alumnoBd.setRut(alumnoForm.getRut());
+        alumnoBd.setCurso(curso);
+        alumRepo.save(alumnoBd);
 
-        return alumRepo.save(alumn);
+        AlumnoDto alumnoDto = new AlumnoDto();
+        alumnoDto.setId(alumnoBd.getId());
+        alumnoDto.setNombre(alumnoBd.getNombre());
+        alumnoDto.setRut(alumnoBd.getRut());
+        alumnoDto.setIdCurso(alumnoBd.getCurso().getId());
+        return alumnoDto;
     }
 
     @Override
     @Transactional
-    public Alumno actualizar(Alumno alumn) {
-        Alumno alumnoBd = alumRepo.findById(alumn.getId())
+    public AlumnoDto actualizar(AlumnoFormDto alumnoForm, Long idAlumno) {
+        Alumno alumnoBd = alumRepo.findById(idAlumno)
             .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
        
-        Curso cursoBd = cursoRepo.findById(alumn.getCurso().getId())
+        Curso cursoBd = cursoRepo.findById(alumnoForm.getIdCurso())
             .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
      
-        rutServ.verificarRut(alumn.getRut());
-        alumnoBd.setNombre(alumn.getNombre());
+        rutServ.verificarRut(alumnoForm.getRut());
+        alumnoBd.setNombre(alumnoForm.getNombre());
         alumnoBd.setCurso(cursoBd);
-        alumnoBd.setRut(alumn.getRut());
+        alumnoBd.setRut(alumnoForm.getRut());
         alumRepo.save(alumnoBd);
-        return alumn;
+
+        AlumnoDto alumnoDto = new AlumnoDto();
+        alumnoDto.setId(alumnoBd.getId());
+        alumnoDto.setNombre(alumnoBd.getNombre());
+        alumnoDto.setRut(alumnoBd.getRut());
+        alumnoDto.setIdCurso(alumnoBd.getCurso().getId());
+        return alumnoDto;
     }
 
     @Override
     @Transactional
-    public AlumnoDto eliminar(Long idAlumno) {
-        AlumnoDto dto = new AlumnoDto();
+    public ApiReponseStatusDto eliminar(Long idAlumno) {
+        ApiReponseStatusDto dto = new ApiReponseStatusDto();
         Alumno alumnoBd = alumRepo.findById(idAlumno)
             .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
 
         List<Nota> notasAlumno = notaRepo.findByAlumnoId(idAlumno);
         if(!notasAlumno.isEmpty()){
-            dto.setStatus("209");
-            dto.setMessage("ALUMNO CON NOTAS EN EL SISTEMA!!");
-            return dto;
+            throw new RuntimeException("Alumno con notas en el sistema!!");
         }
         alumRepo.delete(alumnoBd);
-        dto.setStatus("200");
-        dto.setMessage("ALUMNO ELIMINADO CON EXITO!");
+        dto.setSuccess(true);
+        dto.setMessage("Alumno eliminado!");
         return dto;
     }
 
@@ -103,10 +120,20 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Nota> notaPorAlumno(Long idAlumno) {
+    public List<NotaDto> notaPorAlumno(Long idAlumno) {
         Alumno alumnoBd = alumRepo.findById(idAlumno)
             .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
-        return notaRepo.findByAlumnoId(alumnoBd.getId());
+        List<Nota> notas = notaRepo.findByAlumnoId(alumnoBd.getId());
+        List<NotaDto> notaDtos = new ArrayList<>();
+        for(Nota nota: notas) {
+            notaDtos.add(new NotaDto(nota.getId()
+                    ,nota.getAlumno().getId()
+                    ,nota.getAlumno().getNombre()
+                    ,nota.getAsignatura().getId()
+                    ,nota.getAsignatura().getNombre()
+                    ,nota.getNota()));
+        }
+        return notaDtos;
     }
 
     @Override
@@ -128,7 +155,7 @@ public class AlumnoServiceImpl implements AlumnoService {
     public Float promedioAsignaturaAlumno(Long idAlumno,Long idAsignatura) {
         List<Nota> notas = notaRepo.findByAlumnoIdAndAsignaturaId(idAlumno,idAsignatura);
         if(notas==null){
-            return null;
+            throw new RuntimeException("El alumno no tiene notas en la asignatura");
         }
         Float nota=0.0f;
         for(int i = 0;i<notas.size();i++){
@@ -153,7 +180,7 @@ public class AlumnoServiceImpl implements AlumnoService {
         informe.setAsignaturas(asigServ.listarTodo());
 
         Map<String,List<Float>> notasAsignatura =new LinkedHashMap<>();
-        List<Asignatura> asignaturas = asigServ.listarTodo();
+        List<AsignaturaDto> asignaturas = asigServ.listarTodo();
 
         for(int i = 0;i<asignaturas.size();i++){
             notasAsignatura.put(
@@ -182,12 +209,5 @@ public class AlumnoServiceImpl implements AlumnoService {
         informe.setPromedio(promedioGeneralAlumno(alumnoBd.getId()));
         return informe;
     }
-
-    //@Override
-    //public List<Float> prueba(Long id,Long id2) {
-        //return notaRepo.listarNotasDeCadaAsignaturaPorAlumno(id,id2);
-    //}
-
-
 }
 

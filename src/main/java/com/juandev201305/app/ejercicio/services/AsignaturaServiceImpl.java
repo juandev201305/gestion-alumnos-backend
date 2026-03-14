@@ -1,5 +1,9 @@
 package com.juandev201305.app.ejercicio.services;
 
+import com.juandev201305.app.ejercicio.dtos.ApiReponseStatusDto;
+import com.juandev201305.app.ejercicio.dtos.AsignaturaDto;
+import com.juandev201305.app.ejercicio.dtos.AsignaturaFormDto;
+import com.juandev201305.app.ejercicio.dtos.NotaDto;
 import com.juandev201305.app.ejercicio.models.Asignatura;
 import com.juandev201305.app.ejercicio.models.Nota;
 import com.juandev201305.app.ejercicio.repositorys.AsignaturaRepository;
@@ -7,6 +11,7 @@ import com.juandev201305.app.ejercicio.repositorys.NotaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,41 +28,72 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
     @Override
     @Transactional(readOnly = true)
-    public List<Asignatura> listarTodo() {
-        return asigRepo.findAll();
+    public List<AsignaturaDto> listarTodo() {
+        List<Asignatura> asignaturas = asigRepo.findAll();
+        List<AsignaturaDto> asignaturaDtos = new ArrayList<>();
+        for(Asignatura asignatura: asignaturas) {
+            asignaturaDtos.add(new AsignaturaDto(asignatura.getId(),asignatura.getNombre(),asignatura.getProfesor()));
+        }
+        return asignaturaDtos;
     }
 
     @Override
     @Transactional
-    public Asignatura guardar(Asignatura asignatura) {
-        return asigRepo.save(asignatura);
-    }
-
-    @Override
-    @Transactional
-    public Asignatura actualizar(Asignatura asignatura) {
-        Asignatura asignaturaBd = asigRepo.findById(asignatura.getId())
-            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
-        asignaturaBd.setNombre(asignatura.getNombre());
-        asignaturaBd.setProfesor(asignatura.getProfesor());
+    public AsignaturaDto guardar(AsignaturaFormDto asignaturaForm) {
+        Asignatura asignaturaBd = new Asignatura();
+        asignaturaBd.setNombre(asignaturaForm.getNombre());
+        asignaturaBd.setProfesor(asignaturaForm.getProfesor());
         asigRepo.save(asignaturaBd);
-        return asignatura;
+
+        AsignaturaDto asignaturaDto = new AsignaturaDto();
+        asignaturaDto.setId(asignaturaBd.getId());
+        asignaturaDto.setNombre(asignaturaBd.getNombre());
+        asignaturaDto.setProfesor(asignaturaBd.getProfesor());
+        return asignaturaDto;
     }
 
     @Override
     @Transactional
-    public Asignatura eliminar(Long idAsignatura) {
+    public AsignaturaDto actualizar(AsignaturaFormDto asignaturaForm, Long idAsignatura) {
+        Asignatura asignaturaBd = asigRepo.findById(idAsignatura)
+            .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
+        asignaturaBd.setNombre(asignaturaForm.getNombre());
+        asignaturaBd.setProfesor(asignaturaForm.getProfesor());
+        asigRepo.save(asignaturaBd);
+        AsignaturaDto asignaturaDto = new AsignaturaDto();
+        asignaturaDto.setId(asignaturaBd.getId());
+        asignaturaDto.setNombre(asignaturaBd.getNombre());
+        asignaturaDto.setProfesor(asignaturaBd.getProfesor());
+        return asignaturaDto;
+    }
+
+    @Override
+    @Transactional
+    public ApiReponseStatusDto eliminar(Long idAsignatura) {
+        ApiReponseStatusDto dto = new ApiReponseStatusDto();
         Asignatura asignaturaBd = asigRepo.findById(idAsignatura)
             .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
         asigRepo.delete(asignaturaBd);
-        return asignaturaBd;
+        dto.setSuccess(true);
+        dto.setMessage("Asignatura eliminada!");
+        return dto;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Nota> notasPorAsignatura(Long idAsignatura) {
+    public List<NotaDto> notasPorAsignatura(Long idAsignatura) {
         Asignatura asignaturaBd = asigRepo.findById(idAsignatura)
             .orElseThrow(() -> new RuntimeException("Asignatura no encontrada"));
-        return notaRepo.findByAsignaturaId(asignaturaBd.getId());
+        List<Nota> notas = notaRepo.findByAsignaturaId(asignaturaBd.getId());
+        List<NotaDto> notaDtos = new ArrayList<>();
+        for(Nota nota: notas) {
+            notaDtos.add(new NotaDto(nota.getId()
+                    ,nota.getAlumno().getId()
+                    ,nota.getAlumno().getNombre()
+                    ,nota.getAsignatura().getId()
+                    ,nota.getAsignatura().getNombre()
+                    ,nota.getNota()));
+        }
+        return notaDtos;
     }
 }
