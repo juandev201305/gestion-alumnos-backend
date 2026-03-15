@@ -118,7 +118,7 @@ La API quedará disponible en:
 |--------|----------|
 | GET    | `/alumno` |
 | POST   | `/alumno` |
-| PUT    | `/alumno` |
+| PUT    | `/alumno/{id}` |
 | DELETE | `/alumno/{id}` |
 
 ### Endpoints adicionales
@@ -137,7 +137,7 @@ La API quedará disponible en:
 |--------|----------|
 | GET    | `/curso` |
 | POST   | `/curso` |
-| PUT    | `/curso` |
+| PUT    | `/curso/{id}` |
 | DELETE | `/curso/{id}` |
 
 ## Asignatura
@@ -146,7 +146,7 @@ La API quedará disponible en:
 |--------|----------|
 | GET    | `/asignatura` |
 | POST   | `/asignatura` |
-| PUT    | `/asignatura` |
+| PUT    | `/asignatura/{id}` |
 | DELETE | `/asignatura/{id}` |
 
 ## Nota
@@ -155,8 +155,78 @@ La API quedará disponible en:
 |--------|----------|
 | GET    | `/nota` |
 | POST   | `/nota` |
-| PUT    | `/nota` |
+| PUT    | `/nota/{id}` |
 | DELETE | `/nota/{id}` |
+
+---
+
+# Requests con DTO
+
+Desde la implementación de DTOs, los endpoints `POST` y `PUT` reciben objetos de entrada `FormDto`.
+
+Importante:
+
+- ya no se envían objetos anidados como `curso`, `alumno` o `asignatura`
+- ahora las relaciones se envían con IDs simples como `idCurso`, `idAlumno` e `idAsignatura`
+
+## Alumno (`AlumnoFormDto`)
+
+Se usa en:
+
+- `POST /alumno`
+- `PUT /alumno/{id}`
+
+```json
+{
+  "nombre": "Juan Perez",
+  "rut": "12345678-9",
+  "idCurso": 1
+}
+```
+
+## Curso (`CursoFormDto`)
+
+Se usa en:
+
+- `POST /curso`
+- `PUT /curso/{id}`
+
+```json
+{
+  "nivel": 1,
+  "letra": "A",
+  "nombreProfesorJefe": "Maria Gonzalez"
+}
+```
+
+## Asignatura (`AsignaturaFormDto`)
+
+Se usa en:
+
+- `POST /asignatura`
+- `PUT /asignatura/{id}`
+
+```json
+{
+  "nombre": "Matematicas",
+  "profesor": "Carlos Soto"
+}
+```
+
+## Nota (`NotaFormDto`)
+
+Se usa en:
+
+- `POST /nota`
+- `PUT /nota/{id}`
+
+```json
+{
+  "idAlumno": 1,
+  "idAsignatura": 1,
+  "nota": 6.0
+}
+```
 
 ---
 
@@ -174,9 +244,7 @@ POST /alumno
 {
   "nombre": "####",
   "rut": "########",
-  "curso": {
-    "id": 1
-  }
+  "idCurso": 1
 }
 ```
 
@@ -187,9 +255,7 @@ POST /alumno
   "id": 1,
   "nombre": "####",
   "rut": "########",
-  "curso": {
-    "id": 1
-  }
+  "idCurso": 1
 }
 ```
 
@@ -203,12 +269,8 @@ POST /nota
 
 ```json
 {
-  "alumno": {
-    "id": 1
-  },
-  "asignatura": {
-    "id": 1
-  },
+  "idAlumno": 1,
+  "idAsignatura": 1,
   "nota": 6.0
 }
 ```
@@ -218,12 +280,10 @@ POST /nota
 ```json
 {
   "id": 5,
-  "alumno": {
-    "id": 1
-  },
-  "asignatura": {
-    "id": 1
-  },
+  "idAlumno": 1,
+  "nombreAlumno": "####",
+  "idAsignatura": 1,
+  "asignatura": "####",
   "nota": 6.0
 }
 ```
